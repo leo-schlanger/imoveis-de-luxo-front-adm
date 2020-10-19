@@ -1,5 +1,4 @@
 import { Flex, Heading } from '@chakra-ui/core';
-import React from 'react';
 import TopNavigation from '../components/TopNavigation';
 
 export default function Home(): JSX.Element {
