@@ -5,6 +5,7 @@ import {
   HttpLink,
 } from 'apollo-boost';
 import Cookies from 'js-cookie';
+import fetch from 'isomorphic-unfetch';
 
 export const client = new ApolloClient({
   ssrMode: typeof window === 'undefined',
@@ -20,6 +21,7 @@ export const client = new ApolloClient({
   }).concat(
     new HttpLink({
       uri: process.env.API_GRAPHQL_URL,
+      fetch,
     }),
   ),
 });
