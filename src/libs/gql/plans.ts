@@ -53,6 +53,32 @@ export const CREATE_PLAN = gql`
   }
 `;
 
+export const UPDATE_PLAN = gql`
+  mutation updatePlan(
+    $name: String
+    $description: String
+    $quantity_properties: Int
+    $quantity_photos: Int
+    $quantity_videos: Int
+    $value: Float
+    $id: String!
+  ) {
+    updatePlan(
+      data: {
+        name: $name
+        description: $description
+        quantity_properties: $quantity_properties
+        quantity_photos: $quantity_photos
+        quantity_videos: $quantity_videos
+        value: $value
+      }
+      id: $id
+    ) {
+      id
+    }
+  }
+`;
+
 export const DELETE_PLAN = gql`
   mutation deletePlan($id: String!) {
     deletePlan(id: $id)

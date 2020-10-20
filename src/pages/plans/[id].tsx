@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-// import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import {
   Flex,
@@ -13,11 +12,11 @@ import {
   useToast,
 } from '@chakra-ui/core';
 import { useRouter } from 'next/router';
-import { schemaCreatePlan } from '../../utils/yupValidations';
+import { schemaUpdatePlan } from '../../utils/yupValidations';
 import { yupResolver } from '../../utils/yupResolver';
 import Input from '../../components/Input';
 import TopNavigation from '../../components/TopNavigation';
-import { CREATE_PLAN, FIND_PLAN_BY_ID } from '../../libs/gql/plans';
+import { FIND_PLAN_BY_ID, UPDATE_PLAN } from '../../libs/gql/plans';
 import Progress from '../../components/Progress';
 import { Plan } from '../../libs/api';
 
@@ -38,11 +37,11 @@ function PlanDetails(): JSX.Element {
   const router = useRouter();
   const toast = useToast();
   const { control, handleSubmit, errors } = useForm<UpdatePlanData>({
-    resolver: yupResolver(schemaCreatePlan),
+    resolver: yupResolver(schemaUpdatePlan),
   });
 
   const { id } = router.query;
-  const [createPlan, { error }] = useMutation(CREATE_PLAN);
+  const [updatePlan, { error }] = useMutation(UPDATE_PLAN);
 
   const { data: response, loading, error: notFound } = useQuery<
     FindPlanByIDData
@@ -55,9 +54,10 @@ function PlanDetails(): JSX.Element {
   const onSubmit = useCallback(
     async (data: UpdatePlanData): Promise<void> => {
       try {
-        await createPlan({
+        await updatePlan({
           variables: {
             ...data,
+            id,
           },
         });
         toast({
@@ -82,7 +82,7 @@ function PlanDetails(): JSX.Element {
         console.log({ error });
       }
     },
-    [createPlan, error, router, toast],
+    [updatePlan, error, router, toast, id],
   );
 
   if (loading) {

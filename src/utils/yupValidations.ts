@@ -32,6 +32,15 @@ export const schemaCreatePlan = Yup.object().shape({
   value: Yup.number().required('Valor obrigatório'),
 });
 
+export const schemaUpdatePlan = Yup.object().shape({
+  name: Yup.string().notRequired(),
+  description: Yup.string().notRequired(),
+  quantity_properties: Yup.number().notRequired(),
+  quantity_photos: Yup.number().notRequired(),
+  quantity_videos: Yup.number().notRequired(),
+  value: Yup.number().notRequired(),
+});
+
 export const schemaCreateUsers = Yup.object().shape({
   name: Yup.string().required('Nome obrigatório'),
   responsible: Yup.string().notRequired(),
