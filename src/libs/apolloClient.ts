@@ -25,6 +25,7 @@ export const client = new ApolloClient({
   }).concat(
     new HttpLink({
       uri: process.env.API_GRAPHQL_URL,
+      credentials: 'same-origin',
       fetch,
     }),
   ),
