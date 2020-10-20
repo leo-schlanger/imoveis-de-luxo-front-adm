@@ -7,6 +7,7 @@ import {
 import Cookies from 'js-cookie';
 
 export const client = new ApolloClient({
+  ssrMode: typeof window === 'undefined',
   cache: new InMemoryCache(),
   link: new ApolloLink((operation, forward) => {
     operation.setContext({
