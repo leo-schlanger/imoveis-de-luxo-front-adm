@@ -18,7 +18,7 @@ import Input from '../../components/Input';
 import TopNavigation from '../../components/TopNavigation';
 import { FIND_PLAN_BY_ID, UPDATE_PLAN } from '../../libs/gql/plans';
 import Progress from '../../components/Progress';
-import { Plan } from '../../libs/api';
+import { Plan } from '../../libs/entities/plan';
 
 interface UpdatePlanData {
   name: string;
@@ -89,8 +89,6 @@ function PlanDetails(): JSX.Element {
     return <Progress />;
   }
 
-  const plan = response.getPlanById;
-
   if (notFound) {
     return (
       <Heading as="h1" fontWeight="700">
@@ -98,6 +96,8 @@ function PlanDetails(): JSX.Element {
       </Heading>
     );
   }
+
+  const plan = response.getPlanById;
 
   return (
     <Flex
@@ -109,7 +109,7 @@ function PlanDetails(): JSX.Element {
     >
       <TopNavigation />
       <Heading marginTop="16px" as="h1" fontWeight="700">
-        Cadastro de plano
+        Dados do plano
       </Heading>
       <Flex
         as="form"

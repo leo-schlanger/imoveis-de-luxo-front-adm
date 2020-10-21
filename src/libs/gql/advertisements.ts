@@ -49,7 +49,7 @@ export const FIND_ADVERTISEMENT_BY_ID = gql`
           postal_code
           neighborhood
           sub_neighborhood
-          address
+          street
           number
           complement
         }
@@ -79,9 +79,10 @@ export const CREATE_ADVERTISEMENT = gql`
     $state: String!
     $postal_code: String!
     $neighborhood: String!
+    $sub_neighborhood: String
     $number: String
     $complement: String
-    $address: String!
+    $street: String!
   ) {
     createAdvertisement(
       data: {
@@ -97,9 +98,10 @@ export const CREATE_ADVERTISEMENT = gql`
           state: $state
           postal_code: $postal_code
           neighborhood: $neighborhood
+          sub_neighborhood: $sub_neighborhood
           number: $number
           complement: $complement
-          address: $address
+          street: $street
         }
       }
     ) {

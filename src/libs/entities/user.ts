@@ -38,7 +38,7 @@ export interface User {
     postal_code: string;
     neighborhood: string;
     sub_neighborhood: string | undefined;
-    address: string;
+    street: string;
     number: string | undefined;
     complement: string | undefined;
     description: string | undefined;

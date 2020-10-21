@@ -1,10 +1,122 @@
-import { Flex } from '@chakra-ui/core';
+import { useCallback } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import {
+  Flex,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  Button,
+  SimpleGrid,
+  Heading,
+  useToast,
+  Box,
+} from '@chakra-ui/core';
 import { useRouter } from 'next/router';
-import React from 'react';
+import { schemaUpdateUser } from '../../utils/yupValidations';
+import { yupResolver } from '../../utils/yupResolver';
+import Input from '../../components/Input';
+import TopNavigation from '../../components/TopNavigation';
+import { FIND_USER_BY_ID, UPDATE_USER } from '../../libs/gql/users';
+import Progress from '../../components/Progress';
+import { User, UserType, UserStatus } from '../../libs/entities/user';
+import { Plan } from '../../libs/api';
 
-export default function UserDetails(): JSX.Element {
+interface UpdateUserData {
+  name: string;
+  email: string;
+  phone: string;
+  secondary_phone: string;
+  avatar_url: string;
+  responsible: string;
+  description: string;
+  creci: string;
+  status: UserStatus;
+  type: UserType;
+  plan: Plan;
+  plan_status: boolean;
+  address: {
+    country: string;
+    state: string;
+    postal_code: string;
+    neighborhood: string;
+    sub_neighborhood: string | undefined;
+    street: string;
+    number: string | undefined;
+    complement: string | undefined;
+    description: string | undefined;
+  };
+}
+
+interface FindUserByIDData {
+  getUserById: User;
+}
+
+function UserDetails(): JSX.Element {
   const router = useRouter();
+  const toast = useToast();
+  const { control, handleSubmit, errors } = useForm<UpdateUserData>({
+    resolver: yupResolver(schemaUpdateUser),
+  });
+
   const { id } = router.query;
+  const [updateUser, { error }] = useMutation(UPDATE_USER);
+
+  const { data: response, loading, error: notFound } = useQuery<
+    FindUserByIDData
+  >(FIND_USER_BY_ID, {
+    variables: {
+      id,
+    },
+  });
+
+  const onSubmit = useCallback(
+    async (data: UpdateUserData): Promise<void> => {
+      try {
+        await updateUser({
+          variables: {
+            ...data,
+            id,
+          },
+        });
+        toast({
+          position: 'top-right',
+          title: 'Atualização de usuário realizado com sucesso!',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+        router.push('/Users');
+      } catch (err) {
+        toast({
+          position: 'top-right',
+          title: 'Erro ao tentar atualizar usuário',
+          description: 'Verifique os campos necessários',
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+
+        // eslint-disable-next-line no-console
+        console.log({ error });
+      }
+    },
+    [updateUser, error, router, toast, id],
+  );
+
+  if (loading) {
+    return <Progress />;
+  }
+
+  if (notFound) {
+    return (
+      <Heading as="h1" fontWeight="700">
+        Erro ao carregar o usuário... Tente novamente
+      </Heading>
+    );
+  }
+
+  const user = response.getUserById;
 
   return (
     <Flex
@@ -14,7 +126,339 @@ export default function UserDetails(): JSX.Element {
       alignItems="center"
       flexDirection="column"
     >
-      Hello {id}
+      <TopNavigation />
+      <Heading marginTop="16px" as="h1" fontWeight="700">
+        Dados do usuário
+      </Heading>
+      <Flex
+        as="form"
+        width="80vw"
+        justifyContent="flex-start"
+        flexDirection="column"
+        marginY="48px"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <Heading marginTop="16px" as="h4" fontWeight="400">
+          Informações básicas:
+        </Heading>
+        <Box
+          width="100%"
+          borderWidth="1px"
+          rounded="lg"
+          overflow="hidden"
+          padding="24px"
+        >
+          <SimpleGrid columns={2} width="100%" spacing={4}>
+            <Controller
+              name="name"
+              control={control}
+              defaultValue={user.name}
+              render={(props) => (
+                <FormControl isInvalid={!!errors.name}>
+                  <FormLabel htmlFor="name">Nome:</FormLabel>
+                  <Input
+                    value={props.value}
+                    onChange={props.onChange}
+                    onBlur={props.onBlur}
+                    id="name"
+                    placeholder="Nome"
+                  />
+                  {errors.name && (
+                    <FormErrorMessage>{errors.name.message}</FormErrorMessage>
+                  )}
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="responsible"
+              control={control}
+              defaultValue={user.responsible}
+              render={(props) => (
+                <FormControl isInvalid={!!errors.responsible}>
+                  <FormLabel htmlFor="responsible">
+                    Responsável (Opcional):
+                  </FormLabel>
+                  <Input
+                    value={props.value}
+                    onChange={props.onChange}
+                    onBlur={props.onBlur}
+                    id="responsible"
+                    placeholder="Responsável"
+                  />
+                  {errors.responsible && (
+                    <FormErrorMessage>
+                      {errors.responsible.message}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="email"
+              control={control}
+              defaultValue={user.email}
+              render={(props) => (
+                <FormControl isInvalid={!!errors.email}>
+                  <FormLabel htmlFor="email">E-mail:</FormLabel>
+                  <Input
+                    value={props.value}
+                    onChange={props.onChange}
+                    onBlur={props.onBlur}
+                    id="email"
+                    placeholder="E-mail"
+                  />
+                  {errors.email && (
+                    <FormErrorMessage>{errors.email.message}</FormErrorMessage>
+                  )}
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="creci"
+              control={control}
+              defaultValue={user.creci}
+              render={(props) => (
+                <FormControl isInvalid={!!errors.creci}>
+                  <FormLabel htmlFor="creci">CRECI:</FormLabel>
+                  <Input
+                    value={props.value}
+                    onChange={props.onChange}
+                    onBlur={props.onBlur}
+                    id="creci"
+                    placeholder="CRECI"
+                  />
+                  {errors.creci && (
+                    <FormErrorMessage>{errors.creci.message}</FormErrorMessage>
+                  )}
+                </FormControl>
+              )}
+            />
+          </SimpleGrid>
+        </Box>
+        <Heading marginTop="16px" as="h4" fontWeight="400">
+          Endereço do usuário:
+        </Heading>
+        <Box
+          width="100%"
+          borderWidth="1px"
+          rounded="lg"
+          overflow="hidden"
+          padding="24px"
+        >
+          <SimpleGrid columns={2} width="100%" spacing={4}>
+            <Controller
+              name="postal_code"
+              control={control}
+              defaultValue={user?.address?.postal_code || ''}
+              render={(props) => (
+                <FormControl
+                  isInvalid={!!errors.address && !!errors.address.postal_code}
+                >
+                  <FormLabel htmlFor="postal_code">ZIP-CODE(CEP):</FormLabel>
+                  <Input
+                    value={props.value}
+                    onChange={props.onChange}
+                    onBlur={props.onBlur}
+                    id="postal_code"
+                    placeholder="ZIP-CODE(CEP)"
+                  />
+                  {errors.address && errors.address.country && (
+                    <FormErrorMessage>
+                      {errors.address.country.message}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              )}
+            />
+            <Flex />
+            <Controller
+              name="country"
+              control={control}
+              defaultValue={user?.address?.country || ''}
+              render={(props) => (
+                <FormControl
+                  isInvalid={!!errors.address && !!errors.address.country}
+                >
+                  <FormLabel htmlFor="country">País:</FormLabel>
+                  <Input
+                    value={props.value}
+                    onChange={props.onChange}
+                    onBlur={props.onBlur}
+                    id="country"
+                    placeholder="País"
+                  />
+                  {errors.address && errors.address.country && (
+                    <FormErrorMessage>
+                      {errors.address.country.message}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="state"
+              control={control}
+              defaultValue={user?.address?.state || ''}
+              render={(props) => (
+                <FormControl
+                  isInvalid={!!errors.address && !!errors.address.state}
+                >
+                  <FormLabel htmlFor="state">Estado:</FormLabel>
+                  <Input
+                    value={props.value}
+                    onChange={props.onChange}
+                    onBlur={props.onBlur}
+                    id="state"
+                    placeholder="País"
+                  />
+                  {errors.address && errors.address.state && (
+                    <FormErrorMessage>
+                      {errors.address.state.message}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="neighborhood"
+              control={control}
+              defaultValue={user?.address?.neighborhood || ''}
+              render={(props) => (
+                <FormControl
+                  isInvalid={!!errors.address && !!errors.address.neighborhood}
+                >
+                  <FormLabel htmlFor="neighborhood">Bairro:</FormLabel>
+                  <Input
+                    value={props.value}
+                    onChange={props.onChange}
+                    onBlur={props.onBlur}
+                    id="neighborhood"
+                    placeholder="Bairro"
+                  />
+                  {errors.address && errors.address.neighborhood && (
+                    <FormErrorMessage>
+                      {errors.address.neighborhood.message}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="sub_neighborhood"
+              control={control}
+              defaultValue={user?.address?.sub_neighborhood || ''}
+              render={(props) => (
+                <FormControl
+                  isInvalid={
+                    !!errors.address && !!errors.address.sub_neighborhood
+                  }
+                >
+                  <FormLabel htmlFor="sub_neighborhood">
+                    Sub-bairro (Opcional):
+                  </FormLabel>
+                  <Input
+                    value={props.value}
+                    onChange={props.onChange}
+                    onBlur={props.onBlur}
+                    id="sub_neighborhood"
+                    placeholder="Sub-bairro (Opcional)"
+                  />
+                  {errors.address && errors.address.sub_neighborhood && (
+                    <FormErrorMessage>
+                      {errors.address.sub_neighborhood.message}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="street"
+              control={control}
+              defaultValue={user?.address?.street || ''}
+              render={(props) => (
+                <FormControl
+                  isInvalid={!!errors.address && !!errors.address.street}
+                >
+                  <FormLabel htmlFor="street">Rua:</FormLabel>
+                  <Input
+                    value={props.value}
+                    onChange={props.onChange}
+                    onBlur={props.onBlur}
+                    id="street"
+                    placeholder="Rua"
+                  />
+                  {errors.address && errors.address.street && (
+                    <FormErrorMessage>
+                      {errors.address.street.message}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="number"
+              control={control}
+              defaultValue={user?.address?.number || ''}
+              render={(props) => (
+                <FormControl
+                  isInvalid={!!errors.address && !!errors.address.number}
+                >
+                  <FormLabel htmlFor="number">Número:</FormLabel>
+                  <Input
+                    value={props.value}
+                    onChange={props.onChange}
+                    onBlur={props.onBlur}
+                    id="number"
+                    placeholder="Número"
+                  />
+                  {errors.address && errors.address.number && (
+                    <FormErrorMessage>
+                      {errors.address.number.message}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="complement"
+              control={control}
+              defaultValue={user?.address?.complement || ''}
+              render={(props) => (
+                <FormControl
+                  isInvalid={!!errors.address && !!errors.address.complement}
+                >
+                  <FormLabel htmlFor="complement">
+                    Complemento (Opcional):
+                  </FormLabel>
+                  <Input
+                    value={props.value}
+                    onChange={props.onChange}
+                    onBlur={props.onBlur}
+                    id="complement"
+                    placeholder="Complemento (Opcional)"
+                  />
+                  {errors.address && errors.address.complement && (
+                    <FormErrorMessage>
+                      {errors.address.complement.message}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              )}
+            />
+          </SimpleGrid>
+        </Box>
+
+        <Button
+          type="submit"
+          width="200px"
+          alignSelf="flex-start"
+          marginTop="30px"
+        >
+          Atualizar dados
+        </Button>
+      </Flex>
     </Flex>
   );
 }
+
+export default UserDetails;

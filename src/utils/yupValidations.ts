@@ -18,7 +18,7 @@ export const schemaCreateAdvertisement = Yup.object().shape({
   state: Yup.string().required('Estado obrigatório'),
   postal_code: Yup.string().required('Código postal obrigatório'),
   neighborhood: Yup.string().required('Bairro obrigatório'),
-  address: Yup.string().required('Endereço obrigatório'),
+  street: Yup.string().required('Endereço obrigatório'),
   number: Yup.string(),
   complement: Yup.string(),
 });
@@ -49,4 +49,23 @@ export const schemaCreateUsers = Yup.object().shape({
   email: Yup.string().required('email obrigatório'),
   phone: Yup.string().required('telefone obrigatório'),
   secondary_phone: Yup.string().notRequired(),
+});
+
+export const schemaUpdateUser = Yup.object().shape({
+  name: Yup.string().notRequired(),
+  responsible: Yup.string().notRequired(),
+  description: Yup.string().notRequired(),
+  creci: Yup.string().notRequired(),
+  email: Yup.string().notRequired(),
+  phone: Yup.string().notRequired(),
+  secondary_phone: Yup.string().notRequired(),
+  country: Yup.string().notRequired(),
+  state: Yup.string().notRequired(),
+  postal_code: Yup.string().notRequired(),
+  neighborhood: Yup.string().notRequired(),
+  sub_neighborhood: Yup.string().notRequired(),
+  street: Yup.string().notRequired(),
+  number: Yup.string().notRequired(),
+  complement: Yup.string().notRequired(),
+  // description: Yup.string().notRequired(),
 });
