@@ -119,7 +119,6 @@ const CreateAdvertisement: React.FC = () => {
       <Flex
         as="form"
         width="80vw"
-        height="100vh"
         alignItems="center"
         justifyContent="flex-start"
         flexDirection="column"

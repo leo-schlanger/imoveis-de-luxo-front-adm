@@ -28,7 +28,7 @@ export const FIND_ADVERTISEMENTS = gql`
 `;
 
 export const FIND_ADVERTISEMENT_BY_ID = gql`
-  query getAdvertisementById($id: String!) {
+  query getAdvertisementById($id: Int!) {
     getAdvertisementById(id: $id) {
       id
       title
@@ -85,6 +85,53 @@ export const CREATE_ADVERTISEMENT = gql`
     $street: String!
   ) {
     createAdvertisement(
+      data: {
+        title: $title
+        description: $description
+        status: $status
+        type: $type
+        address_visible: $address_visible
+        property: {
+          type: $type_property
+          value: $value
+          country: $country
+          state: $state
+          postal_code: $postal_code
+          neighborhood: $neighborhood
+          sub_neighborhood: $sub_neighborhood
+          number: $number
+          complement: $complement
+          street: $street
+        }
+      }
+    ) {
+      id
+      title
+    }
+  }
+`;
+
+export const UPDATE_ADVERTISEMENT = gql`
+  mutation updateAdvertisement(
+    $id: Int
+    $title: String
+    $description: String
+    $status: Boolean
+    $type: AdvertisementTypeEnum
+    $address_visible: Boolean
+    $type_property: PropertyTypeEnum
+    $value: Float
+    $country: String
+    $state: String
+    $postal_code: String
+    $neighborhood: String
+    $sub_neighborhood: String
+    $number: String
+    $complement: String
+    $street: String
+  ) {
+    updateAdvertisement(
+      id: $id
       data: {
         title: $title
         description: $description

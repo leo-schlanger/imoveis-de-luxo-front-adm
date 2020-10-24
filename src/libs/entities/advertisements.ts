@@ -43,12 +43,26 @@ export const propertyTypeDescription = {
 } as const;
 
 export interface Advertisement {
-  id: string;
+  id: number;
   title: string;
+  description: string;
   type: AdvertisementType;
   status: boolean;
+  address_visible: boolean;
   property: {
+    value: number;
     type: PropertyType;
+    address: {
+      country: string;
+      state: string;
+      postal_code: string;
+      neighborhood: string;
+      sub_neighborhood: string | undefined;
+      street: string;
+      number: string | undefined;
+      complement: string | undefined;
+      description: string | undefined;
+    };
   };
   user: User;
 }

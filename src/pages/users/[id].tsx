@@ -163,12 +163,7 @@ function UserDetails(): JSX.Element {
             <Heading marginTop="16px" as="h4" fontWeight="400">
               Informações básicas:
             </Heading>
-            <Box
-              borderWidth="1px"
-              rounded="lg"
-              overflow="hidden"
-              padding="24px"
-            >
+            <Box borderWidth="1px" rounded="lg" padding="24px">
               <SimpleGrid columns={2} width="100%" spacing={4}>
                 <Controller
                   name="status"
@@ -317,12 +312,7 @@ function UserDetails(): JSX.Element {
             <Heading marginTop="16px" as="h5" fontWeight="400">
               Plano:
             </Heading>
-            <Box
-              borderWidth="1px"
-              rounded="lg"
-              overflow="hidden"
-              padding="24px"
-            >
+            <Box borderWidth="1px" rounded="lg" padding="24px">
               {user.plan ? (
                 <>
                   <Text>Nome: {user.plan.name}</Text>
@@ -338,13 +328,7 @@ function UserDetails(): JSX.Element {
         <Heading marginTop="16px" as="h4" fontWeight="400">
           Endereço do usuário:
         </Heading>
-        <Box
-          width="100%"
-          borderWidth="1px"
-          rounded="lg"
-          overflow="hidden"
-          padding="24px"
-        >
+        <Box width="100%" borderWidth="1px" rounded="lg" padding="24px">
           <SimpleGrid columns={2} width="100%" spacing={4}>
             <Controller
               name="postal_code"
