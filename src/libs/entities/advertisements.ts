@@ -42,7 +42,7 @@ export const propertyTypeDescription = {
   CUSTOMIZED: 'Customizado',
 } as const;
 
-export interface IAdvertisement {
+export interface Advertisement {
   id: string;
   title: string;
   type: AdvertisementType;

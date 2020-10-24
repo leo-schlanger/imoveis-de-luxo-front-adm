@@ -1,9 +1,9 @@
 import gql from 'graphql-tag';
-import { IAdvertisement } from '../entities/advertisements';
+import { Advertisement } from '../entities/advertisements';
 
 export interface IQueryAdvertisementsListData {
   advertisements: {
-    list: IAdvertisement[];
+    list: Advertisement[];
     total: number;
   };
 }
