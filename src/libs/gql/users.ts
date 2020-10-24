@@ -103,6 +103,7 @@ export const UPDATE_USER = gql`
     $street: String
   ) {
     updateUser(
+      id: $id
       data: {
         name: $name
         responsible: $responsible
@@ -122,7 +123,6 @@ export const UPDATE_USER = gql`
           complement: $complement
           street: $street
         }
-        id: $id
       }
     ) {
       id

@@ -11,6 +11,9 @@ import {
   Heading,
   useToast,
   Box,
+  Avatar,
+  Text,
+  Select,
 } from '@chakra-ui/core';
 import { useRouter } from 'next/router';
 import { schemaUpdateUser } from '../../utils/yupValidations';
@@ -19,7 +22,13 @@ import Input from '../../components/Input';
 import TopNavigation from '../../components/TopNavigation';
 import { FIND_USER_BY_ID, UPDATE_USER } from '../../libs/gql/users';
 import Progress from '../../components/Progress';
-import { User, UserType, UserStatus } from '../../libs/entities/user';
+import {
+  User,
+  UserType,
+  UserStatus,
+  UserStatusDescription,
+  UserTypeDescription,
+} from '../../libs/entities/user';
 import { Plan } from '../../libs/api';
 
 interface UpdateUserData {
@@ -51,6 +60,10 @@ interface UpdateUserData {
 interface FindUserByIDData {
   getUserById: User;
 }
+
+const userTypes = ['ADM', 'ADVERTISER', 'USER'] as const;
+
+const userStatus = ['NEW', 'ACTIVE', 'INACTIVE'] as const;
 
 function UserDetails(): JSX.Element {
   const router = useRouter();
@@ -130,6 +143,13 @@ function UserDetails(): JSX.Element {
       <Heading marginTop="16px" as="h1" fontWeight="700">
         Dados do usuário
       </Heading>
+      <Avatar
+        name={user.name}
+        src={user.avatar_url ? user.avatar_url : '/unknown.jpg'}
+        size="2xl"
+        alignSelf="center"
+        marginTop="16px"
+      />
       <Flex
         as="form"
         width="80vw"
@@ -138,103 +158,183 @@ function UserDetails(): JSX.Element {
         marginY="48px"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <Heading marginTop="16px" as="h4" fontWeight="400">
-          Informações básicas:
-        </Heading>
-        <Box
-          width="100%"
-          borderWidth="1px"
-          rounded="lg"
-          overflow="hidden"
-          padding="24px"
-        >
-          <SimpleGrid columns={2} width="100%" spacing={4}>
-            <Controller
-              name="name"
-              control={control}
-              defaultValue={user.name}
-              render={(props) => (
-                <FormControl isInvalid={!!errors.name}>
-                  <FormLabel htmlFor="name">Nome:</FormLabel>
-                  <Input
-                    value={props.value}
-                    onChange={props.onChange}
-                    onBlur={props.onBlur}
-                    id="name"
-                    placeholder="Nome"
-                  />
-                  {errors.name && (
-                    <FormErrorMessage>{errors.name.message}</FormErrorMessage>
+        <Flex as="div" width="100%" margin="0px" flexDirection="row">
+          <Flex as="div" width="60%" margin="0px" flexDirection="column">
+            <Heading marginTop="16px" as="h4" fontWeight="400">
+              Informações básicas:
+            </Heading>
+            <Box
+              borderWidth="1px"
+              rounded="lg"
+              overflow="hidden"
+              padding="24px"
+            >
+              <SimpleGrid columns={2} width="100%" spacing={4}>
+                <Controller
+                  name="status"
+                  control={control}
+                  defaultValue={user.status}
+                  render={(props) => (
+                    <Select
+                      value={props.value}
+                      onChange={props.onChange}
+                      onBlur={props.onBlur}
+                      id="status"
+                      variant="outline"
+                    >
+                      {userStatus.map((item) => (
+                        <Box
+                          key={item}
+                          as="option"
+                          backgroundColor="gray.600"
+                          defaultValue={item}
+                        >
+                          {UserStatusDescription[item]}
+                        </Box>
+                      ))}
+                    </Select>
                   )}
-                </FormControl>
-              )}
-            />
-            <Controller
-              name="responsible"
-              control={control}
-              defaultValue={user.responsible}
-              render={(props) => (
-                <FormControl isInvalid={!!errors.responsible}>
-                  <FormLabel htmlFor="responsible">
-                    Responsável (Opcional):
-                  </FormLabel>
-                  <Input
-                    value={props.value}
-                    onChange={props.onChange}
-                    onBlur={props.onBlur}
-                    id="responsible"
-                    placeholder="Responsável"
-                  />
-                  {errors.responsible && (
-                    <FormErrorMessage>
-                      {errors.responsible.message}
-                    </FormErrorMessage>
+                />
+                <Controller
+                  name="type"
+                  control={control}
+                  defaultValue={user.type}
+                  render={(props) => (
+                    <Select
+                      value={props.value}
+                      onChange={props.onChange}
+                      onBlur={props.onBlur}
+                      id="type"
+                      variant="outline"
+                    >
+                      {userTypes.map((item) => (
+                        <Box
+                          key={item}
+                          as="option"
+                          backgroundColor="gray.600"
+                          defaultValue={item}
+                        >
+                          {UserTypeDescription[item]}
+                        </Box>
+                      ))}
+                    </Select>
                   )}
-                </FormControl>
-              )}
-            />
-            <Controller
-              name="email"
-              control={control}
-              defaultValue={user.email}
-              render={(props) => (
-                <FormControl isInvalid={!!errors.email}>
-                  <FormLabel htmlFor="email">E-mail:</FormLabel>
-                  <Input
-                    value={props.value}
-                    onChange={props.onChange}
-                    onBlur={props.onBlur}
-                    id="email"
-                    placeholder="E-mail"
-                  />
-                  {errors.email && (
-                    <FormErrorMessage>{errors.email.message}</FormErrorMessage>
+                />
+                <Controller
+                  name="name"
+                  control={control}
+                  defaultValue={user.name}
+                  render={(props) => (
+                    <FormControl isInvalid={!!errors.name}>
+                      <FormLabel htmlFor="name">Nome:</FormLabel>
+                      <Input
+                        value={props.value}
+                        onChange={props.onChange}
+                        onBlur={props.onBlur}
+                        id="name"
+                        placeholder="Nome"
+                      />
+                      {errors.name && (
+                        <FormErrorMessage>
+                          {errors.name.message}
+                        </FormErrorMessage>
+                      )}
+                    </FormControl>
                   )}
-                </FormControl>
-              )}
-            />
-            <Controller
-              name="creci"
-              control={control}
-              defaultValue={user.creci}
-              render={(props) => (
-                <FormControl isInvalid={!!errors.creci}>
-                  <FormLabel htmlFor="creci">CRECI:</FormLabel>
-                  <Input
-                    value={props.value}
-                    onChange={props.onChange}
-                    onBlur={props.onBlur}
-                    id="creci"
-                    placeholder="CRECI"
-                  />
-                  {errors.creci && (
-                    <FormErrorMessage>{errors.creci.message}</FormErrorMessage>
+                />
+                <Controller
+                  name="responsible"
+                  control={control}
+                  defaultValue={user.responsible || ''}
+                  render={(props) => (
+                    <FormControl isInvalid={!!errors.responsible}>
+                      <FormLabel htmlFor="responsible">
+                        Responsável (Opcional):
+                      </FormLabel>
+                      <Input
+                        value={props.value}
+                        onChange={props.onChange}
+                        onBlur={props.onBlur}
+                        id="responsible"
+                        placeholder="Responsável"
+                      />
+                      {errors.responsible && (
+                        <FormErrorMessage>
+                          {errors.responsible.message}
+                        </FormErrorMessage>
+                      )}
+                    </FormControl>
                   )}
-                </FormControl>
+                />
+                <Controller
+                  name="email"
+                  control={control}
+                  defaultValue={user.email}
+                  render={(props) => (
+                    <FormControl isInvalid={!!errors.email}>
+                      <FormLabel htmlFor="email">E-mail:</FormLabel>
+                      <Input
+                        value={props.value}
+                        onChange={props.onChange}
+                        onBlur={props.onBlur}
+                        id="email"
+                        placeholder="E-mail"
+                      />
+                      {errors.email && (
+                        <FormErrorMessage>
+                          {errors.email.message}
+                        </FormErrorMessage>
+                      )}
+                    </FormControl>
+                  )}
+                />
+                <Controller
+                  name="creci"
+                  control={control}
+                  defaultValue={user.creci || ''}
+                  render={(props) => (
+                    <FormControl isInvalid={!!errors.creci}>
+                      <FormLabel htmlFor="creci">CRECI:</FormLabel>
+                      <Input
+                        value={props.value}
+                        onChange={props.onChange}
+                        onBlur={props.onBlur}
+                        id="creci"
+                        placeholder="CRECI"
+                      />
+                      {errors.creci && (
+                        <FormErrorMessage>
+                          {errors.creci.message}
+                        </FormErrorMessage>
+                      )}
+                    </FormControl>
+                  )}
+                />
+              </SimpleGrid>
+            </Box>
+          </Flex>
+          <Flex as="div" width="40%" marginX="16px" flexDirection="column">
+            <Heading marginTop="16px" as="h5" fontWeight="400">
+              Plano:
+            </Heading>
+            <Box
+              borderWidth="1px"
+              rounded="lg"
+              overflow="hidden"
+              padding="24px"
+            >
+              {user.plan ? (
+                <>
+                  <Text>Nome: {user.plan.name}</Text>
+                  <Text>Descrição: {user.plan.description}</Text>
+                  <Text>Valor: {user.plan.value}</Text>
+                </>
+              ) : (
+                <Text>Nenhum plano vinculado</Text>
               )}
-            />
-          </SimpleGrid>
-        </Box>
+            </Box>
+          </Flex>
+        </Flex>
         <Heading marginTop="16px" as="h4" fontWeight="400">
           Endereço do usuário:
         </Heading>
