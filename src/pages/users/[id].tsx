@@ -99,7 +99,7 @@ function UserDetails(): JSX.Element {
           duration: 9000,
           isClosable: true,
         });
-        router.push('/Users');
+        router.push('/users');
       } catch (err) {
         toast({
           position: 'top-right',
@@ -174,18 +174,15 @@ function UserDetails(): JSX.Element {
                       value={props.value}
                       onChange={props.onChange}
                       onBlur={props.onBlur}
+                      color="black"
+                      backgroundColor="gray.400"
                       id="status"
                       variant="outline"
                     >
                       {userStatus.map((item) => (
-                        <Box
-                          key={item}
-                          as="option"
-                          backgroundColor="gray.600"
-                          defaultValue={item}
-                        >
+                        <option key={item} value={item}>
                           {UserStatusDescription[item]}
-                        </Box>
+                        </option>
                       ))}
                     </Select>
                   )}
@@ -199,18 +196,15 @@ function UserDetails(): JSX.Element {
                       value={props.value}
                       onChange={props.onChange}
                       onBlur={props.onBlur}
+                      color="black"
+                      backgroundColor="gray.400"
                       id="type"
                       variant="outline"
                     >
                       {userTypes.map((item) => (
-                        <Box
-                          key={item}
-                          as="option"
-                          backgroundColor="gray.600"
-                          defaultValue={item}
-                        >
+                        <option key={item} value={item}>
                           {UserTypeDescription[item]}
-                        </Box>
+                        </option>
                       ))}
                     </Select>
                   )}

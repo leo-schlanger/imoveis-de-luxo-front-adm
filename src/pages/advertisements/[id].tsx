@@ -13,7 +13,7 @@ import {
   Heading,
   useToast,
   Box,
-  Switch,
+  Checkbox,
   Progress,
 } from '@chakra-ui/core';
 import { useRouter } from 'next/router';
@@ -93,6 +93,7 @@ const CreateAdvertisement: React.FC = () => {
 
   const onSubmit = useCallback(
     async (data: CreateAdvertisementData): Promise<void> => {
+      console.log(data);
       try {
         await updateAdvertisement({
           variables: {
@@ -174,10 +175,13 @@ const CreateAdvertisement: React.FC = () => {
               render={(props) => (
                 <FormControl>
                   <FormLabel htmlFor="status">O anúncio está ativo? </FormLabel>
-                  <Switch
-                    size="md"
-                    value={props.value}
-                    onChange={props.onChange}
+                  <Checkbox
+                    size="lg"
+                    id="status"
+                    value={props.value ? 'true' : 'false'}
+                    isChecked={props.value}
+                    onChange={(e) => props.onChange(e.target.checked)}
+                    onBlur={props.onBlur}
                   />
                 </FormControl>
               )}
@@ -192,10 +196,11 @@ const CreateAdvertisement: React.FC = () => {
                   <FormLabel htmlFor="address_visible">
                     Os compradores podem visualizar o endereço?{' '}
                   </FormLabel>
-                  <Switch
-                    size="md"
-                    value={props.value}
-                    onChange={props.onChange}
+                  <Checkbox
+                    size="lg"
+                    value={props.value ? 'true' : 'false'}
+                    isChecked={props.value}
+                    onChange={(e) => props.onChange(e.target.checked)}
                   />
                 </FormControl>
               )}
