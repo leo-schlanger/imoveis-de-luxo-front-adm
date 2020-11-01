@@ -13,7 +13,7 @@ import {
   Heading,
   useToast,
   Box,
-  Checkbox,
+  // Checkbox,
   Progress,
 } from '@chakra-ui/core';
 import { useRouter } from 'next/router';
@@ -36,9 +36,9 @@ import {
 interface CreateAdvertisementData {
   title: string;
   description: string;
-  status: boolean;
+  // status: boolean;
   type: AdvertisementType;
-  address_visible: boolean;
+  // address_visible: boolean;
   type_property: PropertyType;
   value: number;
   country: string;
@@ -168,7 +168,7 @@ const CreateAdvertisement: React.FC = () => {
         </Heading>
         <Box width="100%" borderWidth="1px" rounded="lg" padding="24px">
           <SimpleGrid columns={2} width="100%" spacing={4}>
-            <Controller
+            {/* <Controller
               name="status"
               control={control}
               defaultValue={advertisement.status}
@@ -205,7 +205,7 @@ const CreateAdvertisement: React.FC = () => {
                 </FormControl>
               )}
             />
-            <Flex />
+            <Flex /> */}
             <Controller
               name="type"
               control={control}

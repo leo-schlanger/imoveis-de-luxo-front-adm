@@ -111,14 +111,18 @@ export const CREATE_ADVERTISEMENT = gql`
   }
 `;
 
+// TODO: solucionar no backend dps ativar
+// $status: Boolean
+// $address_visible: Boolean
+// status: $status
+// address_visible: $address_visible
+
 export const UPDATE_ADVERTISEMENT = gql`
   mutation updateAdvertisement(
     $id: Int
     $title: String
     $description: String
-    $status: Boolean
     $type: AdvertisementTypeEnum
-    $address_visible: Boolean
     $type_property: PropertyTypeEnum
     $value: Float
     $country: String
@@ -135,9 +139,7 @@ export const UPDATE_ADVERTISEMENT = gql`
       data: {
         title: $title
         description: $description
-        status: $status
         type: $type
-        address_visible: $address_visible
         property: {
           type: $type_property
           value: $value
