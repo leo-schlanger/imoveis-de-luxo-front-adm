@@ -23,6 +23,23 @@ export const FIND_USERS = gql`
   }
 `;
 
+export const FIND_USERS_BY_STATUS = gql`
+  query findUsers($per_page: Int, $page: Int, $status: UserStatusEnum) {
+    users(
+      data: { per_page: $per_page, page: $page, filter: { status: $status } }
+    ) {
+      list {
+        id
+        name
+        email
+        type
+        status
+      }
+      total
+    }
+  }
+`;
+
 export const FIND_USER_BY_ID = gql`
   query getUserById($id: String!) {
     getUserById(id: $id) {

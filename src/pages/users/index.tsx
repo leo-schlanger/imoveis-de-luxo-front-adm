@@ -6,6 +6,7 @@ import {
   Flex,
   Heading,
   IconButton,
+  Select,
   Tag,
   Text,
 } from '@chakra-ui/core';
@@ -22,33 +23,41 @@ import {
   TableRowsSkeleton,
 } from '../../components/Table';
 import TopNavigation from '../../components/TopNavigation';
+import { UserStatusDescription } from '../../libs/entities/user';
 import {
   DELETE_USER,
   FIND_USERS,
+  FIND_USERS_BY_STATUS,
   IQueryUsersListData,
 } from '../../libs/gql/users';
 
 const headers = ['Nome', 'E-mail', 'Status', 'Tipo', 'Opções'];
 
+const userStatus = ['', 'NEW', 'ACTIVE', 'INACTIVE'] as const;
+
 export default function Users(): JSX.Element {
   const [page, setPage] = useState(1);
   const [per_page, setPerPage] = useState(20);
+  const [status, setStatus] = useState('');
   const [modalDeleteView, setModalDeleteView] = useState(false);
   const [selected, setSelected] = useState('');
 
   const router = useRouter();
   const { data, loading, error, refetch } = useQuery<IQueryUsersListData>(
-    FIND_USERS,
+    status !== '' ? FIND_USERS_BY_STATUS : FIND_USERS,
     {
       variables: {
         per_page,
         page,
+        status: status !== '' ? status : null,
       },
     },
   );
   const [deleteUser] = useMutation(DELETE_USER);
 
   if (error) {
+    // eslint-disable-next-line no-console
+    console.log(error);
     return (
       <Heading as="h1" fontWeight="400">
         Erro no carregamento da página. Tente novamente.
@@ -76,21 +85,43 @@ export default function Users(): JSX.Element {
           Usuários
         </Heading>
       </Box>
-      <Button
-        alignSelf="flex-end"
+      <Flex
+        width="80vw"
         alignItems="center"
-        justifyContent="center"
-        marginRight="10vw"
-        marginY="16px"
-        onClick={() => {
-          router.push('users/create');
-        }}
+        flexDirection="row"
+        justifyContent="space-between"
+        margin="8px"
       >
-        <Text fontSize="16px" fontWeight="700">
-          Criar novo usuário
-        </Text>
-        <Box as={FiPlus} color="blue.500" size="32px" />
-      </Button>
+        <Select
+          value={status}
+          width="15%"
+          alignSelf="flex-start"
+          onChange={(event) => setStatus(event.target.value)}
+          color="black"
+          backgroundColor="gray.400"
+          height="48px"
+        >
+          {userStatus.map((item) => (
+            <option key={item} value={item}>
+              {UserStatusDescription[item]}
+            </option>
+          ))}
+        </Select>
+        <Button
+          alignItems="center"
+          justifyContent="center"
+          alignSelf="flex-end"
+          marginY="16px"
+          onClick={() => {
+            router.push('users/create');
+          }}
+        >
+          <Text fontSize="16px" fontWeight="700">
+            Criar novo usuário
+          </Text>
+          <Box as={FiPlus} color="blue.500" size="32px" />
+        </Button>
+      </Flex>
       <Table>
         <TableRows columns={headers.length}>
           {headers.map((element) => (

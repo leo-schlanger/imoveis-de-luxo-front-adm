@@ -35,7 +35,7 @@ interface TableRowsSkeletonProps extends SkeletonProps {
 export const Table: React.FC = ({ children }) => {
   return (
     <Grid
-      width="100%"
+      width="100vw"
       alignSelf="center"
       templateColumns="1fr 80% 1fr"
       templateRows="1fr auto auto"
