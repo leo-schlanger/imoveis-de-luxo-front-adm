@@ -169,7 +169,7 @@ export default function Advertisements(): JSX.Element {
                       _focus={null}
                       aria-label="Deletar usuário"
                       onClick={() => {
-                        setSelected(advertisement.id);
+                        setSelected(String(advertisement.id));
                         setModalDeleteView(true);
                       }}
                     />
